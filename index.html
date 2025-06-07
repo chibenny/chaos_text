@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            body {
+                background: #1a1a2e;
+                color: #e0e0e0;
+                font-family: 'Segoe UI', Arial, sans-serif;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                min-height: 100vh;
+                margin: 0;
+                padding-top: 5vh;
+            }
+            textarea {
+                background: #22223b;
+                color: #ffd6a5;
+                border: 2px solid #3a3a5a;
+                border-radius: 8px;
+                padding: 1em;
+                font-size: 1.2em;
+                width: 90vw;
+                max-width: 500px;
+                box-shadow: 0 2px 8px #0008;
+                resize: vertical;
+            }
+            button {
+                margin-top: 1.2em;
+                padding: 0.7em 2.5em;
+                background: linear-gradient(90deg, #8fd6e1 0%, #f67280 100%);
+                border: none;
+                border-radius: 6px;
+                color: #22223b;
+                font-size: 1.1em;
+                font-weight: bold;
+                cursor: pointer;
+                transition: background 0.3s, transform 0.15s;
+                box-shadow: 0 1px 6px #0006;
+            }
+            button:hover {
+                background: linear-gradient(90deg, #f67280 0%, #8fd6e1 100%);
+                transform: scale(1.04);
+            }
+            #result {
+                margin-top: 2em;
+                background: #0f3460;
+                color: #ffe066;
+                border-radius: 10px;
+                padding: 1.2em;
+                width: 90vw;
+                max-width: 520px;
+                min-height: 3em;
+                font-size: 1.15em;
+                word-break: break-word;
+                box-shadow: 0 2px 8px #0006;
+            }
+        </style>
+    </head>
+    <body>
+        <textarea rows="5" cols="45" id="rage_input"></textarea>
+        <div style="margin-top: 1.2em; margin-bottom: 1em;">
+            <label>
+                <input type="checkbox" id="extra_rage">
+                Extra Rage
+            </label>
+            <label style="margin-right:1em;">
+                <input type="checkbox" id="chaos_mode">
+                Chaos Mode
+            </label>
+        </div>
+        <button id="chaos-maker">Make Some Chaos!</button>
+        <div id="result"></div>
+    </body>
+    <script type="text/javascript">
+        (() => {
+            console.log("Script loaded.")
+            const chaosMaker = document.querySelector("#chaos-maker");
+            const userMessage = document.querySelector("#rage_input");
+            const chaosMode = document.querySelector("#chaos_mode");
+            const extraRage = document.querySelector("#extra_rage");
+
+            const makeChaos = () => {
+                fetch("/entropy", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        rage_input: userMessage.value,
+                        chaos_mode: chaosMode.checked ? 1 : 0,
+                        extra_rage: extraRage.checked ? 1 : 0,
+                    })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    document.querySelector("#result").innerHTML = data.result;
+                })
+                .catch(err => {
+                    document.querySelector("#result").innerHTML = "OOPS! Something went wrong.";
+                    console.log(err);
+                })
+            }
+
+            chaosMaker.addEventListener("click", () => {makeChaos();})
+        })();
+    </script>
+</html>
