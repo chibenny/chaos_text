@@ -16,6 +16,10 @@ class Request:
     extra_rage: int = field(default=0)
     chaos_mode: int = field(default=0)
 
+    def __post_init__(self):
+        # Don't try to rage text War and Peace
+        self.rage_input = self.rage_input[:5000]
+
 
 @app.get("/")
 async def home():
